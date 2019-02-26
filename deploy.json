@@ -39,7 +39,7 @@
           }
         }
       }
-    }, 
+    },
     {
       "apiVersion": "2017-05-10",
       "name": "spoke1",
@@ -72,6 +72,29 @@
                 "ipRange": "10.2.1.0/24"
               }
             ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "hubtospoke1peering",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/hubvnet",
+        "Microsoft.Resources/deployments/spoke1"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnetpeering.json"
+        },
+        "parameters": {
+          "remoteVnetName": {
+            "value": "spoke1"
+          },
+          "localVnetName": {
+            "value": "hubvnet"
           }
         }
       }
