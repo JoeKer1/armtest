@@ -4,11 +4,11 @@
     "parameters": {
         "remoteVnetSubscriptionId": {
             "type": "string",
-            "defaultValue": "subscription().subscriptionId"
+            "defaultValue": "[subscription().subscriptionId]"
         },
         "remoteVnetResourceGroupName": {
             "type": "string",
-            "defaultValue": "resourceGroup().name"
+            "defaultValue": "[resourceGroup().name]"
         },
         "remoteVnetName": {
             "type": "string"
