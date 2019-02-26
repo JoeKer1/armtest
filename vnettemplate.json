@@ -5,10 +5,6 @@
         "location": {
             "type": "string"
         },
-        "resourceGroup": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().name]"
-        },
         "subnets": {
             "type": "array",
             "defaultValue": [{
@@ -47,7 +43,6 @@
             "name": "[parameters('vnetName')]",
             "type": "Microsoft.Network/virtualNetworks",
             "location": "[parameters('location')]",
-            "resourceGroup": "[parameters('resourceGroup')]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": "[parameters('addressPrefixes')]"
