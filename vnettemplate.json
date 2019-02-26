@@ -7,7 +7,11 @@
         },
         "subscriptionId": {
             "type": "string",
-            "default": "[subscription()]"
+            "default": "[subscription().subscriptionId]"
+        },
+        "resourceGroup": {
+            "type": "string",
+            "default": "[resourceGroup().name]"
         },
         "subnets": {
             "type": "array",
