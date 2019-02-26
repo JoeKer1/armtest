@@ -5,10 +5,6 @@
         "location": {
             "type": "string"
         },
-        "subscriptionId": {
-            "type": "string",
-            "defaultValue": "[subscription().subscriptionId]"
-        },
         "resourceGroup": {
             "type": "string",
             "defaultValue": "[resourceGroup().name]"
@@ -52,7 +48,6 @@
             "type": "Microsoft.Network/virtualNetworks",
             "location": "[parameters('location')]",
             "resourceGroup": "[parameters('resourceGroup')]",
-            "subscriptionId": "[parameters('subscriptionId')]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": "[parameters('addressPrefixes')]"
