@@ -5,6 +5,10 @@
         "location": {
             "type": "string"
         },
+        "subscriptionId": {
+            "type": "string",
+            "default": "[subscription()]"
+        },
         "subnets": {
             "type": "array",
             "defaultValue": [{
@@ -43,6 +47,8 @@
             "name": "[parameters('vnetName')]",
             "type": "Microsoft.Network/virtualNetworks",
             "location": "[parameters('location')]",
+            "resourceGroup": "[parameters('resourceGroup')]",
+            "subscriptionId": "[parameters('subscriptionId')]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": "[parameters('addressPrefixes')]"
