@@ -98,7 +98,8 @@
           }
         }
       }
-    }, {
+    },
+    {
       "apiVersion": "2017-05-10",
       "name": "spoke1-to-hub-peer",
       "type": "Microsoft.Resources/deployments",
@@ -106,6 +107,8 @@
         "Microsoft.Resources/deployments/hubvnet",
         "Microsoft.Resources/deployments/spoke1"
       ],
+      "subscriptionId": "[subscription().subscriptionId]",
+      "resourceGroup": "[resourceGroup().name]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -117,6 +120,9 @@
           },
           "localVnetName": {
             "value": "spoke1"
+          },
+          "peeringFromHub": {
+            "value": "false"
           }
         }
       }

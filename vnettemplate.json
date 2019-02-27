@@ -7,10 +7,12 @@
         },
         "subnets": {
             "type": "array",
-            "defaultValue": [{
-                "name": "default",
-                "ipRange": "10.0.0.0/24"
-            }]
+            "defaultValue": [
+                {
+                    "name": "default",
+                    "ipRange": "10.0.0.0/24"
+                }
+            ]
         },
         "addressPrefixes": {
             "type": "array",
@@ -51,6 +53,5 @@
                 "enableDdosProtection": "[variables('enableDdosProtection')]"
             }
         }
-      ]
-  }
-  
+    ]
+}

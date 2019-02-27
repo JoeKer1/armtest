@@ -15,30 +15,51 @@
         },
         "localVnetName": {
             "type": "string"
+        },
+        "peeringFromHub": {
+            "type": "bool",
+            "defaultValue": "true"
         }
     },
     "variables": {
         "networkId": "[concat(parameters('remoteVnetSubscription'), '/resourceGroups/', parameters('remoteVnetResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('remoteVnetName'))]",
         "peeringName": "[concat(parameters('localVnetName'), '/', parameters('localVnetName'), 'to', parameters('remoteVnetName'))]"
     },
-"resources": [
+    "resources": [
         {
-        "apiVersion": "2016-06-01",
-        "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-        "name": "[variables('peeringName')]",
-        "location": "[resourceGroup().location]",
-        "dependsOn": [
-
-        ],
-        "properties": {
-        "allowVirtualNetworkAccess": true,
-        "allowForwardedTraffic": false,
-        "allowGatewayTransit": false,
-        "useRemoteGateways": false,
-            "remoteVirtualNetwork": {
-                "id": "[variables('networkId')]"
+            "condition": "[equals(parameters('peeringFromHub'), 'true')]",
+            "apiVersion": "2016-06-01",
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+            "name": "[variables('peeringName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [],
+            "properties": {
+                "allowVirtualNetworkAccess": true,
+                "allowForwardedTraffic": false,
+                "allowGatewayTransit": true,
+                "useRemoteGateways": false,
+                "remoteVirtualNetwork": {
+                    "id": "[variables('networkId')]"
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('peeringFromHub'), 'false')]",
+            "apiVersion": "2016-06-01",
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+            "name": "[variables('peeringName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [],
+            "properties": {
+                "allowVirtualNetworkAccess": true,
+                "allowForwardedTraffic": true,
+                "allowGatewayTransit": false,
+                "useRemoteGateways": true,
+                "remoteVirtualNetwork": {
+                    "id": "[variables('networkId')]"
+                }
             }
         }
-        }
+
     ]
 }
