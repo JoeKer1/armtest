@@ -35,9 +35,9 @@
             "dependsOn": [],
             "properties": {
                 "allowVirtualNetworkAccess": true,
-                "allowForwardedTraffic": "[if(equals(parameters('peeringFromHub'), 'yes'), 'false', 'true')]",
-                "allowGatewayTransit": "[if(equals(parameters('peeringFromHub'), 'yes'), 'true', 'false')]",
-                "useRemoteGateways": "[if(equals(parameters('peeringFromHub'), 'yes'), 'false', 'true')]",
+                "allowForwardedTraffic": "[if(equals(parameters('peeringFromHub'), 'yes'), bool(0), bool(1))]",
+                "allowGatewayTransit": "[if(equals(parameters('peeringFromHub'), 'yes'), bool(1), bool(0)]",
+                "useRemoteGateways": "[if(equals(parameters('peeringFromHub'), 'yes'), bool(0), bool(1))]",
                 "remoteVirtualNetwork": {
                     "id": "[variables('networkId')]"
                 }
