@@ -27,7 +27,6 @@
     },
     "resources": [
         {
-            "condition": "[equals(parameters('peeringFromHub'), 'true')]",
             "apiVersion": "2016-06-01",
             "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
             "name": "[variables('peeringName')]",
