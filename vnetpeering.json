@@ -29,7 +29,7 @@
         "location": "[resourceGroup().location]",
         "dependsOn": [
             "[variables('networkId')]",
-            "[concat('Microsoft.Network/virtualNetworks/', parameters('localVnetName'))]"
+            "[resourceId('Microsoft.Network/virtualNetworks', parameters('localVnetName'))]"
         ],
         "properties": {
         "allowVirtualNetworkAccess": true,
