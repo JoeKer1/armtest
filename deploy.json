@@ -57,7 +57,7 @@
             "value": "Static"
           },
           "virtualNetworkName": {
-            "value": "HubVnet"
+            "value": "hubvnet"
           }
         },
         "outputs": {}
