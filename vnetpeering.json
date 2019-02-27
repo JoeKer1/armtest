@@ -17,8 +17,8 @@
             "type": "string"
         },
         "peeringFromHub": {
-            "type": "bool",
-            "defaultValue": true
+            "type": "string",
+            "defaultValue": "yes"
         }
     },
     "variables": {
@@ -35,9 +35,9 @@
             "dependsOn": [],
             "properties": {
                 "allowVirtualNetworkAccess": true,
-                "allowForwardedTraffic": "[if(parameters('peeringFromHub'), 'false', 'true')]",
-                "allowGatewayTransit": "[if(parameters('peeringFromHub'), 'true', 'false')]",
-                "useRemoteGateways": "[if(parameters('peeringFromHub'), 'false', 'true')]",
+                "allowForwardedTraffic": "[if(equals(parameters('peeringFromHub'), 'yes'), 'false', 'true')]",
+                "allowGatewayTransit": "[if(equals(parameters('peeringFromHub'), 'yes'), 'true', 'false')]",
+                "useRemoteGateways": "[if(equals(parameters('peeringFromHub'), 'yes'), 'false', 'true')]",
                 "remoteVirtualNetwork": {
                     "id": "[variables('networkId')]"
                 }

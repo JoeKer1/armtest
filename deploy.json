@@ -122,7 +122,7 @@
             "value": "spoke1"
           },
           "peeringFromHub": {
-            "value": false
+            "value": "no"
           }
         }
       }
