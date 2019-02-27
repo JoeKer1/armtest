@@ -36,7 +36,7 @@
             "properties": {
                 "allowVirtualNetworkAccess": true,
                 "allowForwardedTraffic": "[if(equals(parameters('peeringFromHub'), 'yes'), bool(0), bool(1))]",
-                "allowGatewayTransit": "[if(equals(parameters('peeringFromHub'), 'yes'), bool(1), bool(0)]",
+                "allowGatewayTransit": "[if(equals(parameters('peeringFromHub'), 'yes'), bool(1), bool(0))]",
                 "useRemoteGateways": "[if(equals(parameters('peeringFromHub'), 'yes'), bool(0), bool(1))]",
                 "remoteVirtualNetwork": {
                     "id": "[variables('networkId')]"
