@@ -28,8 +28,7 @@
         "name": "[variables('peeringName')]",
         "location": "[resourceGroup().location]",
         "dependsOn": [
-            "[variables('networkId')]",
-            "[resourceId('Microsoft.Network/virtualNetworks', parameters('localVnetName'))]"
+
         ],
         "properties": {
         "allowVirtualNetworkAccess": true,
