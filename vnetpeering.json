@@ -18,7 +18,7 @@
         },
         "peeringFromHub": {
             "type": "bool",
-            "defaultValue": "true"
+            "defaultValue": true
         }
     },
     "variables": {
