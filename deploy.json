@@ -98,6 +98,28 @@
           }
         }
       }
+    }, {
+      "apiVersion": "2017-05-10",
+      "name": "spoke1-to-hub-peer",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/hubvnet",
+        "Microsoft.Resources/deployments/spoke1"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnetpeering.json"
+        },
+        "parameters": {
+          "remoteVnetName": {
+            "value": "hubvnet"
+          },
+          "localVnetName": {
+            "value": "spoke1"
+          }
+        }
+      }
     }
   ],
   "outputs": {}
