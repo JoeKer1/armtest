@@ -35,31 +35,13 @@
             "dependsOn": [],
             "properties": {
                 "allowVirtualNetworkAccess": true,
-                "allowForwardedTraffic": false,
-                "allowGatewayTransit": true,
-                "useRemoteGateways": false,
-                "remoteVirtualNetwork": {
-                    "id": "[variables('networkId')]"
-                }
-            }
-        },
-        {
-            "condition": "[equals(parameters('peeringFromHub'), 'false')]",
-            "apiVersion": "2016-06-01",
-            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-            "name": "[variables('peeringName')]",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [],
-            "properties": {
-                "allowVirtualNetworkAccess": true,
-                "allowForwardedTraffic": true,
-                "allowGatewayTransit": false,
-                "useRemoteGateways": true,
+                "allowForwardedTraffic": "[if(parameters('peeringFromHub'), 'false', 'true')]",
+                "allowGatewayTransit": "[if(parameters('peeringFromHub'), 'true', 'false')]",
+                "useRemoteGateways": "[if(parameters('peeringFromHub'), 'false', 'true')]",
                 "remoteVirtualNetwork": {
                     "id": "[variables('networkId')]"
                 }
             }
         }
-
     ]
 }
