@@ -148,6 +148,43 @@
           }
         }
       }
+    }, {
+      "apiVersion": "2017-05-10",
+      "name": "hub-mgmt-subnet-nsg",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/hubvnet"
+      ],
+      "subscriptionId": "[subscription().subscriptionId]",
+      "resourceGroup": "[resourceGroup().name]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/subnet-nsg.json"
+        },
+        "parameters": {
+          "rules": {
+            "value": [{
+              "name": "test-rule",
+              "description": "allow rdp",
+              "protocol": "Tcp",
+              "sourcePortRange": "3309",
+              "destinationPortRange": "3309",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": "200",
+              "direction": "Inbound"
+            }]
+          },
+          "vnetName": {
+            "value": "hubvnet"
+          },
+          "subnetName": {
+            "value": "mgmt"
+          }
+        }
+      }
     }
   ],
   "outputs": {}

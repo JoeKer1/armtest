@@ -2,9 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.1",
     "parameters": {
-        "name": {
-            "type": "string"
-        },
         "rules": {
             "type": "array"
         },
@@ -20,7 +17,7 @@
         }
     },
     "variables": {
-        "nsgName": "[concat(parameters('name'), '-sg')]",
+        "nsgName": "[concat(parameters('vnetName'), '-', parameters('subnetName'), '-sg')]",
         "copy": [
             {
                 "name": "rules",
