@@ -169,9 +169,9 @@
               "description": "allow rdp",
               "protocol": "Tcp",
               "sourcePortRange": "3309",
-              "destinationPortRange": "3309",
+              "destPortRange": "3309",
               "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
+              "destAddressPrefix": "*",
               "access": "Allow",
               "priority": "200",
               "direction": "Inbound"

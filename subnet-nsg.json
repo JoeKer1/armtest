@@ -55,7 +55,7 @@
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('vnetResourceGroupName')]",
             "dependsOn": [
-                "new-nsg"
+                "[variables('nsgName')]"
             ],
             "properties": {
                 "mode": "Incremental",
