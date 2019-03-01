@@ -1,0 +1,87 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.1",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "rules": {
+            "type": "array"
+        },
+        "vnetResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        },
+        "vnetName": {
+            "type": "string"
+        },
+        "subnetName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "nsgName": "[concat(parameters('name'), '-sg')]",
+        "copy": [
+            {
+                "name": "rules",
+                "count": "[length(parameters('rules'))]",
+                "input": {
+                    "name": "[parameters('rules')[copyIndex('rules')].name]",
+                    "properties": {
+                        "description": "[parameters('rules')[copyIndex('rules')].description]",
+                        "protocol": "[parameters('rules')[copyIndex('rules')].protocol]",
+                        "sourcePortRange": "[parameters('rules')[copyIndex('rules')].sourcePortRange]",
+                        "destinationPortRange": "[parameters('rules')[copyIndex('rules')].destPortRange]",
+                        "sourceAddressPrefix": "[parameters('rules')[copyIndex('rules')].sourceAddressPrefix]",
+                        "destinationAddressPrefix": "[parameters('rules')[copyIndex('rules')].destAddressPrefix]",
+                        "access": "[parameters('rules')[copyIndex('rules')].access]",
+                        "priority": "[parameters('rules')[copyIndex('rules')].priority]",
+                        "direction": "[parameters('rules')[copyIndex('rules')].direction]"
+                    }
+                }
+            }
+        ]
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('nsgName')]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2018-11-01",
+            "properties": {
+                "securityRules": "[variables('rules')]"
+            }
+        },
+        {
+            "apiVersion": "2018-11-01",
+            "name": "deploy",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('vnetResourceGroupName')]",
+            "dependsOn": [
+                "new-nsg"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/updatesubnet.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworkName": {
+                        "value": "[parameters('vnetName')]"
+                    },
+                    "subnetName": {
+                        "value": "[parameters('subnetName')]"
+                    },
+                    "subnetAddressPrefix": {
+                        "value": "[reference(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName')), '2018-03-01').addressPrefix]"
+                    },
+                    "nsgId": {
+                        "value": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('name'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
