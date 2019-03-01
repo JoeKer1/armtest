@@ -53,9 +53,6 @@
           "name": {
             "value": "hubvpngateway"
           },
-          "publicIPAddressType": {
-            "value": "Static"
-          },
           "virtualNetworkName": {
             "value": "hubvnet"
           }

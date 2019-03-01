@@ -39,7 +39,7 @@
             }
         },
         {
-            "apiVersion": "2018-10-01",
+            "apiVersion": "2018-11-01",
             "type": "Microsoft.Network/virtualNetworkGateways",
             "name": "[parameters('name')]",
             "location": "[resourceGroup().location]",
@@ -61,8 +61,8 @@
                     }
                 ],
                 "sku": {
-                    "name": "Basic",
-                    "tier": "Basic"
+                    "name": "VpnGw1",
+                    "tier": "VpnGw1"
                 },
                 "gatewayType": "Vpn",
                 "vpnType": "RouteBased",
