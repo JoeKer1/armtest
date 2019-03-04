@@ -8,11 +8,17 @@
         "gatewayName2": {
             "type": "string"
         },
+        "subscription2": {
+            "type": "string"
+        },
+        "resourceGroup2": {
+            "type": "string"
+        },
         "location1": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]"
         },
-        "connectionName1": {
+        "connectionName": {
             "type": "string"
         },
         "sharedKey": {
@@ -23,18 +29,15 @@
     "resources": [ {
         "apiVersion": "2015-05-01-preview",
         "type": "Microsoft.Network/connections",
-        "name": "[parameters('connectionName1')]",
+        "name": "[parameters('connectionName')]",
         "location": "[parameters('location1')]",
-        "dependsOn": [
-          "[concat('Microsoft.Network/virtualNetworkGateways/', parameters('gatewayName1'))]",
-          "[concat('Microsoft.Network/virtualNetworkGateways/', parameters('gatewayName2'))]"
-        ],
+        "dependsOn": [],
         "properties": {
           "virtualNetworkGateway1": {
             "id": "[resourceId('Microsoft.Network/virtualNetworkGateways',parameters('gatewayName1'))]"
           },
           "virtualNetworkGateway2": {
-            "id": "[resourceId('Microsoft.Network/virtualNetworkGateways',parameters('gatewayName2'))]"
+            "id": "[resourceId(parameters('subscription2'), parameters('resourceGroup2') ,parameters('gatewayName2'))]"
           },
           "connectionType": "Vnet2Vnet",
           "routingWeight": 3,
