@@ -70,7 +70,7 @@
           },
           "parameters": {
             "location": {
-              "value": "Central Germany"
+              "value": "westeurope"
             },
             "vnetName": {
               "value": "CGA01hubvnet"
@@ -110,6 +110,9 @@
             },
             "virtualNetworkName": {
               "value": "CGA01hubvnet"
+            },
+            "location": {
+              "value": "westeurope"
             }
           },
           "outputs": {}
