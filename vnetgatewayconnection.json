@@ -37,7 +37,7 @@
             "id": "[resourceId('Microsoft.Network/virtualNetworkGateways',parameters('gatewayName1'))]"
           },
           "virtualNetworkGateway2": {
-            "id": "[resourceId(parameters('subscription2'), parameters('resourceGroup2') ,parameters('gatewayName2'))]"
+            "id": "[resourceId(parameters('subscription2'), parameters('resourceGroup2'), 'Microsoft.Network/virtualNetworkGateways', parameters('gatewayName2'))]"
           },
           "connectionType": "Vnet2Vnet",
           "routingWeight": 3,
