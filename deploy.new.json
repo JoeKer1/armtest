@@ -1,0 +1,120 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+      {
+        "apiVersion": "2017-05-10",
+        "name": "mainhubvnet",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnettemplate.json"
+          },
+          "parameters": {
+            "location": {
+              "value": "East US"
+            },
+            "vnetName": {
+              "value": "mainhubvnet"
+            },
+            "addressPrefixes": {
+              "value": [
+                "10.0.0.0/16"
+              ]
+            },
+            "subnets": {
+              "value": [
+                {
+                  "name": "mgmt",
+                  "ipRange": "10.0.0.64/27"
+                },
+                {
+                  "name": "GatewaySubnet",
+                  "ipRange": "10.0.255.224/27"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "apiVersion": "2017-05-10",
+        "name": "mainhubvnetgateway",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnetgateway.json"
+          },
+          "parameters": {
+            "name": {
+              "value": "mainhubvpngateway"
+            },
+            "virtualNetworkName": {
+              "value": "mainhubvnet"
+            }
+          },
+          "outputs": {}
+        }
+      }, {
+        "apiVersion": "2017-05-10",
+        "name": "CGA01hubvnet",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnettemplate.json"
+          },
+          "parameters": {
+            "location": {
+              "value": "Central Germany"
+            },
+            "vnetName": {
+              "value": "CGA01hubvnet"
+            },
+            "addressPrefixes": {
+              "value": [
+                "10.5.0.0/16"
+              ]
+            },
+            "subnets": {
+              "value": [
+                {
+                  "name": "mgmt",
+                  "ipRange": "10.5.0.64/27"
+                },
+                {
+                  "name": "GatewaySubnet",
+                  "ipRange": "10.5.255.224/27"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "apiVersion": "2017-05-10",
+        "name": "CGA01hubvnetgateway",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnetgateway.json"
+          },
+          "parameters": {
+            "name": {
+              "value": "CGA01hubvpngateway"
+            },
+            "virtualNetworkName": {
+              "value": "CGA01hubvnet"
+            }
+          },
+          "outputs": {}
+        }
+      } 
+    ],
+    "outputs": {}
+  }

@@ -1,8 +1,45 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {},
+    "parameters": {
+        "gatewayName1": {
+            "type": "string"
+        },
+        "gatewayName2": {
+            "type": "string"
+        },
+        "location1": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "connectionName1": {
+            "type": "string"
+        },
+        "sharedKey": {
+            "type": "string"
+        }
+    },
     "variables": {},
-    "resources": [],
+    "resources": [ {
+        "apiVersion": "2015-05-01-preview",
+        "type": "Microsoft.Network/connections",
+        "name": "[parameters('connectionName1')]",
+        "location": "[parameters('location1')]",
+        "dependsOn": [
+          "[concat('Microsoft.Network/virtualNetworkGateways/', parameters('gatewayName1'))]",
+          "[concat('Microsoft.Network/virtualNetworkGateways/', parameters('gatewayName2'))]"
+        ],
+        "properties": {
+          "virtualNetworkGateway1": {
+            "id": "[resourceId('Microsoft.Network/virtualNetworkGateways',parameters('gatewayName1'))]"
+          },
+          "virtualNetworkGateway2": {
+            "id": "[resourceId('Microsoft.Network/virtualNetworkGateways',parameters('gatewayName2'))]"
+          },
+          "connectionType": "Vnet2Vnet",
+          "routingWeight": 3,
+          "sharedKey": "[parameters('sharedKey')]"
+        }
+      }],
     "outputs": {}
 }
