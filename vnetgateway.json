@@ -44,6 +44,7 @@
             "name": "[parameters('name')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
+                "[variables('publicIpAddressName')]"
             ],
             "properties": {
                 "ipConfigurations": [
