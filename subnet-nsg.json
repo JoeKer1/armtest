@@ -1,6 +1,9 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.1",
+    "metadata": {
+        "description": "Creates an NSG and attaches it to a subnet"
+    },
     "parameters": {
         "rules": {
             "type": "array"
@@ -60,7 +63,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/updatesubnet.json",
+                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/change-subnet-nsg.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {

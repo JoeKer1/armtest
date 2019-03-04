@@ -1,6 +1,9 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
+    "metadata:": {
+        "description": "Create/Update Virtual Network Gateway (VPN). Operation can take up to 30m"
+    },
     "parameters": {
         "name": {
             "type": "string"
@@ -61,8 +64,8 @@
                     }
                 ],
                 "sku": {
-                    "name": "Basic",
-                    "tier": "Basic"
+                    "name": "VpnGw1",
+                    "tier": "VpnGw1"
                 },
                 "gatewayType": "Vpn",
                 "vpnType": "RouteBased",
