@@ -14,10 +14,13 @@
         },
         "subnetName": {
             "type": "string"
+        },
+        "nsg-name": {
+            "type": "string"
         }
     },
     "variables": {
-        "nsgName": "[concat(parameters('vnetName'), '-', parameters('subnetName'), '-sg')]",
+        "nsg-name": "[variables('nsg-name')]",
         "copy": [
             {
                 "name": "rules",
@@ -42,7 +45,7 @@
     "resources": [
         {
             "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[variables('nsgName')]",
+            "name": "[variables('nsg-name')]",
             "location": "[resourceGroup().location]",
             "apiVersion": "2018-11-01",
             "properties": {
@@ -51,11 +54,11 @@
         },
         {
             "apiVersion": "2018-11-01",
-            "name": "[concat(variables('nsgName'), '-deploy')]",
+            "name": "[concat(variables('nsg-name'), '-deploy')]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('vnetResourceGroupName')]",
             "dependsOn": [
-                "[variables('nsgName')]"
+                "[variables('nsg-name')]"
             ],
             "properties": {
                 "mode": "Incremental",
