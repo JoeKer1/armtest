@@ -77,7 +77,7 @@
                         "value": "[reference(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName')), '2018-03-01').addressPrefix]"
                     },
                     "nsgId": {
-                        "value": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+                        "value": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg-name'))]"
                     }
                 }
             }
