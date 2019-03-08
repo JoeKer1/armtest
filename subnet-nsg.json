@@ -20,7 +20,7 @@
         }
     },
     "variables": {
-        "nsg-name": "[variables('nsg-name')]",
+        "nsg-name": "[parameters('nsg-name')]",
         "copy": [
             {
                 "name": "rules",
