@@ -24,6 +24,7 @@
         "copy": [
             {
                 "name": "rules",
+                "condition": "[greater(length(parameters('rules')), 0)]",
                 "count": "[length(parameters('rules'))]",
                 "input": {
                     "name": "[parameters('rules')[copyIndex('rules')].name]",
