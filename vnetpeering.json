@@ -25,13 +25,14 @@
         }
     },
     "variables": {
-        "networkId": "[concat('/subscriptions/', parameters('remote-vnet-subscription'), '/resourceGroups/', parameters('remote-vnet-resourcegroupname'), '/providers/Microsoft.Network/virtualNetworks/', parameters('remote-vnet-name'))]"
+        "networkId": "[concat('/subscriptions/', parameters('remote-vnet-subscription'), '/resourceGroups/', parameters('remote-vnet-resourcegroupname'), '/providers/Microsoft.Network/virtualNetworks/', parameters('remote-vnet-name'))]",
+        "connection-name": "[concat(parameters('local-vnet-name'), '/', parameters('peering-name'))]"
     },
     "resources": [
         {
             "apiVersion": "2016-06-01",
             "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-            "name": "[parameters('peering-name')]",
+            "name": "[variables('connection-name')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [],
             "properties": {
