@@ -2,41 +2,43 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "remoteVnetSubscription": {
+        "remote-vnet-subscription": {
             "type": "string",
             "defaultValue": "[subscription().id]"
         },
-        "remoteVnetResourceGroupName": {
+        "remote-vnet-resourcegroupname": {
             "type": "string",
             "defaultValue": "[resourceGroup().name]"
         },
-        "remoteVnetName": {
+        "remote-vnet-name": {
             "type": "string"
         },
-        "localVnetName": {
+        "local-vnet-name": {
             "type": "string"
         },
-        "peeringFromHub": {
+        "peering-from-hub": {
             "type": "string",
             "defaultValue": "yes"
+        }, 
+        "peering-name": {
+            "type": "string"
         }
     },
     "variables": {
-        "networkId": "[concat('/subscriptions/', parameters('remoteVnetSubscription'), '/resourceGroups/', parameters('remoteVnetResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('remoteVnetName'))]",
-        "peeringName": "[concat(parameters('localVnetName'), '/', parameters('localVnetName'), 'to', parameters('remoteVnetName'))]"
+        "networkId": "[concat('/subscriptions/', parameters('remote-vnet-subscription'), '/resourceGroups/', parameters('remote-vnet-resourcegroupname'), '/providers/Microsoft.Network/virtualNetworks/', parameters('remote-vnet-name'))]",
     },
     "resources": [
         {
             "apiVersion": "2016-06-01",
             "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-            "name": "[variables('peeringName')]",
+            "name": "[parameters('peering-name')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [],
             "properties": {
                 "allowVirtualNetworkAccess": true,
                 "allowForwardedTraffic": false,
-                "allowGatewayTransit": "[if(equals(parameters('peeringFromHub'), 'yes'), bool(1), bool(0))]",
-                "useRemoteGateways": "[if(equals(parameters('peeringFromHub'), 'yes'), bool(0), bool(1))]",
+                "allowGatewayTransit": "[if(equals(parameters('peering-from-hub'), 'yes'), bool(1), bool(0))]",
+                "useRemoteGateways": "[if(equals(parameters('peering-from-hub'), 'yes'), bool(0), bool(1))]",
                 "remoteVirtualNetwork": {
                     "id": "[variables('networkId')]"
                 }
