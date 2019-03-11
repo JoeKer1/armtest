@@ -1,0 +1,134 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "addressPrefixes": {
+            "type": "array"
+        },
+        "subnets": {
+            "type": "array"
+        },
+        "lob-prefix": {
+            "type": "string"
+        },
+        "project-name": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string"
+        },
+        "region": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "hub-subscriptionID": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "resource-prefix": "[concat(parameters('lob-prefix'), '-', parameters('project-name'), '-', parameters('environment'), '-', parameters('region'))]",
+        "hub-resource-prefix": "[concat(parameters('lob-prefix'), '-HUB-', parameters('environment'), '-', parameters('region'))]",
+        "spoke-vnet": "[concat(variables('resource-prefix'), '-VNET')]",
+        "spoke-vpn-gw": "[concat(variables('resource-prefix'), '-VPNG')]",
+        "hub-vnet": "[concat(variables('hub-resource-prefix'), '-VNET')]",
+        "hub-vpn-gw": "[concat(variables('hub-resource-prefix'), '-VPNG')]",
+        "hub-rg": "[concat(variables('resource-prefix'), '-RG')]",
+        "vnet-to-vnet-psk": "Password123!",
+        "vnet-to-op-psk": "Password123!",
+        "copy": [
+            {
+                "name": "subnets",
+                "count": "[length(parameters('subnets'))]",
+                "input": {
+                    "name": "[concat(variables('resource-prefix'), '-', parameters('subnets')[copyIndex('subnets')].name, '-', 'SNET')]",
+                    "ipRange": "[parameters('subnets')[copyIndex('subnets')].ipRange]"
+                }
+            },
+            {
+                "name": "subnets-nsgs",
+                "count": "[length(parameters('subnets'))]",
+                "input": {
+                    "name": "[concat(variables('resource-prefix'), '-', parameters('subnets')[copyIndex('subnets')].name, '-', 'NSG')]",
+                    "nsgRules": "[parameters('subnets')[copyIndex('subnets')].nsgRules]"
+                }
+            }
+        ]
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-05-10",
+            "name": "spoke-vnet",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnettemplate.json"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "vnetName": {
+                        "value": "[variables('spoke-vnet')]"
+                    },
+                    "addressPrefixes": "[parameters('addressPrefixes')]",
+                    "subnets": "[variables('subnets')]"
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "spoke-to-hub-peering",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnetpeering.json"
+                },
+                "parameters": {
+                    "remoteVnetSubscription": {
+                        "value": "[parameters('hub-subscriptionID')]"
+                    },
+                    "remoteVnetResourceGroupName": {
+                        "value": "[variables('hub-rg')]"
+                    },
+                    "remoteVnetName": {
+                        "value": "[variables('hub-vnet')]"
+                    },
+                    "localVnetName": {
+                        "value": "[variables('spoke-vnet')]"
+                    },
+                    "peeringFromHub": {
+                        "value": "No"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[concat('subnet-nsg',copyIndex('nsg-copy'))]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/subnet-nsg.json"
+                },
+                "parameters": {
+                    "rules": {
+                        "value": "[variables('subnets-nsgs')[copyIndex('nsg-copy')]]"
+                    },
+                    "vnetName": "[variables('spoke-vnet')]",
+                    "subnetName": "[variables('subnets')[copyIndex('nsg-copy')]]",
+                    "nsg-name": "[variables('subnets-nsgs')[copyIndex('nsg-copy')]]"
+                }
+            },
+            "copy": {
+                "name": "nsg-copy",
+                "count": "[length(variables('subnets-nsgs')]"
+            },
+            "outputs": {}
+        }
+    ]
+}

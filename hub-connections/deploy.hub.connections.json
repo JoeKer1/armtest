@@ -1,0 +1,116 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "main-gateway-name": {
+            "type": "string"
+        },
+        "connection-hub-gateway-name": {
+            "type": "string"
+        },
+        "connection-hub-subscription": {
+            "type": "string"
+        },
+        "connection-hub-resource-group": {
+            "type": "string"
+        },
+        "connection-hub-location": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "project": {
+            "type": "string"
+        },
+        "regions": {
+            "type": "object"
+        },
+        "vnet-to-vnet-psk": {
+            "type": "string"
+        },
+        "main-hub-subscription": {
+            "type": "string"
+        },
+        "main-hub-resource-group": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "main-hub-connection-name": "[concat(parameters('project'), '-', parameters('regions')[parameters('location')], '-TO-', parameters('regions')[parameters('connection-hub-location')])]",
+        "connection-hub-connection-name": "[concat(parameters('project'), '-', parameters('regions')[parameters('connection-hub-location')], '-TO-', parameters('regions')[parameters('location')])]",
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-11-01",
+            "name": "[concat(variables('main-hub-connection-name'), '-deploy')]",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnetgatewayconnection.json"
+                },
+                "parameters": {
+                    "gatewayName1": {
+                        "value": "[parameters('main-gateway-name')]"
+                    },
+                    "gatewayName2": {
+                        "value": "[parameters('connection-hub-gateway-name')]"
+                    },
+                    "subscription2": {
+                        "value": "[parameters('connection-hub-subscription')]"
+                    },
+                    "resourceGroup2": {
+                        "value": "[parameters('connection-hub-resource-group')]"
+                    },
+                    "connectionName": {
+                        "value": "[variables('main-hub-connection-name')]"
+                    },
+                    "sharedKey": {
+                        "value": "[parameters('vnet-to-vnet-psk')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2018-11-01",
+            "name": "[concat(variables('connection-hub-connection-name'), '-deploy')]",
+            "type": "Microsoft.Resources/deployments",
+            "subscriptionId": "[parameters('connection-hub-subscription')]",
+            "resourceGroup": "[parameters('connection-hub-resource-group')]",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnetgatewayconnection.json"
+                },
+                "parameters": {
+                    "gatewayName1": {
+                        "value": "[parameters('connection-hub-gateway-name')]"
+                    },
+                    "gatewayName2": {
+                        "value": "[parameters('main-gateway-name')]"
+                    },
+                    "subscription2": {
+                        "value": "[parameters('main-hub-subscription')]"
+                    },
+                    "resourceGroup2": {
+                        "value": "[parameters('main-hub-resource-group')]"
+                    },
+                    "location1": {
+                        "value": "[parameters('connection-hub-location')]"
+                    },
+                    "connectionName": {
+                        "value": "[variables('connection-hub-connection-name')]"
+                    },
+                    "sharedKey": {
+                        "value": "[parameters('vnet-to-vnet-psk')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

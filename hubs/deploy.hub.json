@@ -1,0 +1,145 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "lob-prefix": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "address-prefixes": {
+            "type": "array"
+        },
+        "subnets": {
+            "type": "array"
+        },
+        "project": {
+            "type": "string"
+        },
+        "regions": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "hub-resource-prefix": "[concat(parameters('lob-prefix'), '-', parameters('project'), '-', parameters('environment'), '-', parameters('regions')[parameters('location')])]",
+        "hub-network-name": "[concat(variables('hub-resource-prefix'), '-VNET')]",
+        "hub-vpn-gw": "[concat(variables('hub-resource-prefix'), '-VPNG')]",
+        "copy": [
+            {
+                "name": "subnets",
+                "count": "[length(parameters('subnets'))]",
+                "input": {
+                    "name": "[if(equals(parameters('subnets')[copyIndex('subnets')].name, 'GatewaySubnet'), 'GatewaySubnet', concat(variables('hub-resource-prefix'), '-', parameters('subnets')[copyIndex('subnets')].name, '-', 'SNET'))]",
+                    "ipRange": "[parameters('subnets')[copyIndex('subnets')].ipRange]"
+                }
+            },
+            {
+                "name": "subnets-nsgs",
+                "count": "[length(parameters('subnets'))]",
+                "input": {
+                    "name": "[concat(variables('hub-resource-prefix'), '-', parameters('subnets')[copyIndex('subnets-nsgs')].name, '-', 'NSG')]",
+                    "nsgrules": "[parameters('subnets')[copyIndex('subnets-nsgs')].nsgrules]"
+                }
+            }
+        ]
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-05-10",
+            "name": "hub-network",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnettemplate.json"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "vnetName": {
+                        "value": "[variables('hub-network-name')]"
+                    },
+                    "addressPrefixes": {
+                        "value": "[parameters('address-prefixes')]"
+                    },
+                    "subnets": {
+                        "value": "[variables('subnets')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "hub-vpn-gw",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/hub-network"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnetgateway.json"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('hub-vpn-gw')]"
+                    },
+                    "virtualNetworkName": {
+                        "value": "[variables('hub-network-name')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[concat('subnet-nsg', copyIndex())]",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/hub-network"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/subnet-nsg.json"
+                },
+                "parameters": {
+                    "rules": {
+                        "value": "[variables('subnets-nsgs')[copyIndex()].nsgrules]"
+                    },
+                    "vnetName": {
+                        "value": "[variables('hub-network-name')]"
+                    },
+                    "subnetName": {
+                        "value": "[variables('subnets')[copyIndex()].name]"
+                    },
+                    "nsg-name": {
+                        "value": "[variables('subnets-nsgs')[copyIndex()].name]"
+                    }
+                }
+            },
+            "copy": {
+                "name": "nsg-copy",
+                "count": "[length(variables('subnets-nsgs'))]"
+            }
+        }
+    ],
+    "outputs": {
+        "subnet-length": {
+            "type": "int",
+            "value": "[length(parameters('subnets'))]"
+        },
+        "subnet-nsgs": {
+            "type": "array",
+            "value": "[variables('subnets-nsgs')]"
+        }
+    }
+}
