@@ -27,6 +27,7 @@
         {
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[variables('nsg-name')]",
+            "condition": "[if(equals(parameters('subnetName'), 'GatewaySubnet'), bool(0), bool(1))]",
             "location": "[resourceGroup().location]",
             "apiVersion": "2018-11-01",
             "properties": {
@@ -36,6 +37,7 @@
         {
             "apiVersion": "2018-11-01",
             "name": "[concat(variables('nsg-name'), '-deploy')]",
+            "condition": "[if(equals(parameters('subnetName'), 'GatewaySubnet'), bool(0), bool(1))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('vnetResourceGroupName')]",
             "dependsOn": [
