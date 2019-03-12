@@ -33,38 +33,6 @@
             "properties": {
                 "securityRules": "[variables('rules')]"
             }
-        },
-        {
-            "apiVersion": "2018-11-01",
-            "name": "[concat(variables('nsg-name'), '-deploy')]",
-            "condition": "[if(equals(parameters('subnetName'), 'GatewaySubnet'), bool(0), bool(1))]",
-            "type": "Microsoft.Resources/deployments",
-            "dependsOn": [
-                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsg-name'))]",
-                "[variables('nsg-name')]"
-            ],
-            "resourceGroup": "[parameters('vnetResourceGroupName')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/change-subnet-nsg.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "virtualNetworkName": {
-                        "value": "[parameters('vnetName')]"
-                    },
-                    "subnetName": {
-                        "value": "[parameters('subnetName')]"
-                    },
-                    "subnetAddressPrefix": {
-                        "value": "[reference(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName')), '2018-03-01').addressPrefix]"
-                    },
-                    "nsgId": {
-                        "value": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg-name'))]"
-                    }
-                }
-            }
         }
     ],
     "outputs": {}
