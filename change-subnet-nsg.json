@@ -20,6 +20,7 @@
       {
         "apiVersion": "2018-03-01",
         "type": "Microsoft.Network/virtualNetworks/subnets",
+        "condition": "[if(equals(parameters('subnetName'), 'GatewaySubnet'), bool(0), bool(1))]",
         "name": "[concat(parameters('virtualNetworkName'), '/', parameters('subnetName'))]",
         "location": "[resourceGroup().location]",
         "properties": {
