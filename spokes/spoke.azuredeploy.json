@@ -28,6 +28,10 @@
         }
     },
     "variables": {
+        "linked-template-base-url": "https://raw.githubusercontent.com/JoeKer1/armtest/master/linked-templates/",
+        "virtual-network-template": "[concat(variables('linked-template-base-url'), 'virtual-network.json')]",
+        "vnet-peering-template": "[concat(variables('linked-template-base-url'), 'vnet-peering.json')]",
+        "nsg-template": "[concat(variables('linked-template-base-url'), 'subnet-nsg.json')]",
         "resource-prefix": "[concat(parameters('lob-prefix'), '-', parameters('project-name'), '-', parameters('environment'), '-', parameters('region'))]",
         "hub-resource-prefix": "[concat('ITS-ITS-HUB-', parameters('environment'), '-', parameters('region'))]",
         "spoke-vnet": "[concat(variables('resource-prefix'), '-VNET')]",
@@ -62,7 +66,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnettemplate.json"
+                    "uri": "[variables('virtual-network-template')]"
                 },
                 "parameters": {
                     "location": {
@@ -90,7 +94,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnetpeering.json"
+                    "uri": "[variables('vnet-peering-template')]"
                 },
                 "parameters": {
                     "peering-name": {
@@ -127,7 +131,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnetpeering.json"
+                    "uri": "[variables('vnet-peering-template')]"
                 },
                 "parameters": {
                     "peering-name": {
@@ -161,7 +165,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/subnet-nsg.json"
+                    "uri": "[variables('nsg-template')]"
                 },
                 "parameters": {
                     "rules": {

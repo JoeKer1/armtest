@@ -32,6 +32,8 @@
         }
     },
     "variables": {
+        "linked-template-base-url": "https://raw.githubusercontent.com/JoeKer1/armtest/master/linked-templates/",
+        "vnet-to-vnet-template": "[concat(variables('linked-template-base-url'), 'vnet-to-vnet.connection.json')]",
         "main-hub-connection-name": "[concat(parameters('project'), '-', parameters('regions')[parameters('location')], '-TO-', parameters('regions')[parameters('connection-hub-location')])]",
         "connection-hub-connection-name": "[concat(parameters('project'), '-', parameters('regions')[parameters('connection-hub-location')], '-TO-', parameters('regions')[parameters('location')])]",
         "resourcePrefix": "[concat(parameters('lob-prefix'), '-', parameters('project'), '-', parameters('environment'), '-')]",
@@ -49,7 +51,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnetgatewayconnection.json"
+                    "uri": "[variables('vnet-to-vnet-template')]"
                 },
                 "parameters": {
                     "gatewayName1": {
@@ -83,7 +85,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnetgatewayconnection.json"
+                    "uri": "[variables('vnet-to-vnet-template')]"
                 },
                 "parameters": {
                     "gatewayName1": {

@@ -28,6 +28,8 @@
         }
     },
     "variables": {
+        "linked-template-base-url": "https://raw.githubusercontent.com/JoeKer1/armtest/master/linked-templates/",
+        "nsg-template": "[concat(variables('linked-template-base-url'), 'subnet-nsg.json')]",
         "resource-prefix": "[concat(parameters('lob-prefix'), '-', parameters('project-name'), '-', parameters('environment'), '-', parameters('region'))]",
         "spoke-vnet": "[concat(variables('resource-prefix'), '-VNET')]",
         "copy": [
@@ -59,7 +61,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/subnet-nsg.json"
+                    "uri": "[variables('nsg-template')]"
                 },
                 "parameters": {
                     "rules": {

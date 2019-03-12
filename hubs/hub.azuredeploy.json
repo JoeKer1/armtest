@@ -26,6 +26,10 @@
         }
     },
     "variables": {
+        "linked-template-base-url": "https://raw.githubusercontent.com/JoeKer1/armtest/master/linked-templates/",
+        "virtual-network-template": "[concat(variables('linked-template-base-url'), 'virtual-network.json')]",
+        "vnet-gateway-template": "[concat(variables('linked-template-base-url'), 'vnet-gateway.json')]",
+        "nsg-template": "[concat(variables('linked-template-base-url'), 'subnet-nsg.json')]",
         "hub-resource-prefix": "[concat(parameters('lob-prefix'), '-', parameters('project'), '-', parameters('environment'), '-', parameters('regions')[parameters('location')])]",
         "hub-network-name": "[concat(variables('hub-resource-prefix'), '-VNET')]",
         "hub-vpn-gw": "[concat(variables('hub-resource-prefix'), '-VPNG')]",
@@ -56,7 +60,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnettemplate.json"
+                    "uri": "[variables('virtual-network-template')]"
                 },
                 "parameters": {
                     "location": {
@@ -84,7 +88,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/vnetgateway.json"
+                    "uri": "[variables('vnet-gateway-template')]"
                 },
                 "parameters": {
                     "name": {
@@ -109,7 +113,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/subnet-nsg.json"
+                    "uri": "[variables('nsg-template')]"
                 },
                 "parameters": {
                     "rules": {
@@ -132,14 +136,5 @@
             }
         }
     ],
-    "outputs": {
-        "subnet-length": {
-            "type": "int",
-            "value": "[length(parameters('subnets'))]"
-        },
-        "subnet-nsgs": {
-            "type": "array",
-            "value": "[variables('subnets-nsgs')]"
-        }
-    }
+    "outputs": {}
 }
