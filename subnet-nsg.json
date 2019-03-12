@@ -41,7 +41,7 @@
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('vnetResourceGroupName')]",
             "dependsOn": [
-                "[variables('nsg-name')]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg-name'))]"
             ],
             "properties": {
                 "mode": "Incremental",
