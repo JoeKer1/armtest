@@ -2,16 +2,7 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "main-gateway-name": {
-            "type": "string"
-        },
-        "connection-hub-gateway-name": {
-            "type": "string"
-        },
         "connection-hub-subscription": {
-            "type": "string"
-        },
-        "connection-hub-resource-group": {
             "type": "string"
         },
         "connection-hub-location": {
@@ -33,13 +24,21 @@
         "main-hub-subscription": {
             "type": "string"
         },
-        "main-hub-resource-group": {
+        "lob-prefix": {
+            "type": "string"
+        },
+        "environment": {
             "type": "string"
         }
     },
     "variables": {
         "main-hub-connection-name": "[concat(parameters('project'), '-', parameters('regions')[parameters('location')], '-TO-', parameters('regions')[parameters('connection-hub-location')])]",
         "connection-hub-connection-name": "[concat(parameters('project'), '-', parameters('regions')[parameters('connection-hub-location')], '-TO-', parameters('regions')[parameters('location')])]",
+        "resourcePrefix": "[concat(parameters('lob-prefix'), '-', parameters('project'), '-', parameters('environment'), '-')]",
+        "main-gateway-name": "[concat(variables('resourcePrefix'), parameters('regions')[parameters('location')], '-VPNG')]",
+        "connection-hub-gateway-name": "[concat(variables('resourcePrefix'), parameters('regions')[parameters('connection-hub-location')], '-VPNG')]",
+        "connection-hub-resource-group": "[concat(variables('resourcePrefix'), parameters('regions')[parameters('connection-hub-location')], '-RG')]",
+        "main-hub-resource-group": "[concat(variables('resourcePrefix'), parameters('regions')[parameters('location')], '-RG')]"
     },
     "resources": [
         {
@@ -54,16 +53,16 @@
                 },
                 "parameters": {
                     "gatewayName1": {
-                        "value": "[parameters('main-gateway-name')]"
+                        "value": "[variables('main-gateway-name')]"
                     },
                     "gatewayName2": {
-                        "value": "[parameters('connection-hub-gateway-name')]"
+                        "value": "[variables('connection-hub-gateway-name')]"
                     },
                     "subscription2": {
                         "value": "[parameters('connection-hub-subscription')]"
                     },
                     "resourceGroup2": {
-                        "value": "[parameters('connection-hub-resource-group')]"
+                        "value": "[variables('connection-hub-resource-group')]"
                     },
                     "connectionName": {
                         "value": "[variables('main-hub-connection-name')]"
@@ -79,7 +78,7 @@
             "name": "[concat(variables('connection-hub-connection-name'), '-deploy')]",
             "type": "Microsoft.Resources/deployments",
             "subscriptionId": "[parameters('connection-hub-subscription')]",
-            "resourceGroup": "[parameters('connection-hub-resource-group')]",
+            "resourceGroup": "[variables('connection-hub-resource-group')]",
             "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
@@ -88,16 +87,16 @@
                 },
                 "parameters": {
                     "gatewayName1": {
-                        "value": "[parameters('connection-hub-gateway-name')]"
+                        "value": "[variables('connection-hub-gateway-name')]"
                     },
                     "gatewayName2": {
-                        "value": "[parameters('main-gateway-name')]"
+                        "value": "[variables('main-gateway-name')]"
                     },
                     "subscription2": {
                         "value": "[parameters('main-hub-subscription')]"
                     },
                     "resourceGroup2": {
-                        "value": "[parameters('main-hub-resource-group')]"
+                        "value": "[variables('main-hub-resource-group')]"
                     },
                     "location1": {
                         "value": "[parameters('connection-hub-location')]"

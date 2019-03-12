@@ -1,0 +1,80 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "localGatewayIP": {
+            "type": "string"
+        },
+        "localGatewayAddressPrefixes": {
+            "type": "array"
+        },
+        "connectionType": {
+            "type": "string"
+        },
+        "sharedKey": {
+            "type": "string"
+        },
+        "lob-prefix": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "project": {
+            "type": "string"
+        },
+        "regions": {
+            "type": "object"
+        },
+        "routing-weight": {
+            "type": "int",
+            "defaultValue": 10
+        }
+    },
+    "variables": {
+        "resource-prefix": "[concat(parameters('lob-prefix'), '-', parameters('project'), '-', parameters('environment'), '-', parameters('regions')[parameters('location')])]",
+        "localgatewayName": "[concat(variables('resource-prefix'), '-', parameters('connectionType'), '-VPN')]",
+        "gatewayName": "[concat(variables('resource-prefix'), '-VPNG')]",
+        "connectionName": "[concat(parameters('project'), '-', parameters('regions')[parameters('location')], '-', parameters('connectionType'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/localNetworkGateways",
+            "name": "[variables('localGatewayName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "properties": {
+                "localNetworkAddressSpace": {
+                    "addressPrefixes": "[parameters('localGatewayAddressPrefixes')]"
+                },
+                "gatewayIpAddress": "[parameters('localGatewayIP')]"
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/connections",
+            "name": "[variables('connectionName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/localNetworkGateways/', variables('localgatewayName'))]"
+            ],
+            "properties": {
+                "virtualNetworkGateway1": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworkGateways',variables('gatewayName'))]"
+                },
+                "localNetworkGateway2": {
+                    "id": "[resourceId('Microsoft.Network/localNetworkGateways', variables('localgatewayName'))]"
+                },
+                "connectionType": "IPsec",
+                "routingWeight": "[parameters('routing-weight')]",
+                "sharedKey": "[parameters('sharedKey')]"
+            }
+        }
+    ],
+    "outputs": {}
+}
