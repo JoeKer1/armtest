@@ -105,7 +105,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "[concat('subnet-nsg', copyIndex())]",
+            "name": "[concat('subnet-nsg', copyIndex(1))]",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
                 "Microsoft.Resources/deployments/hub-network"
@@ -132,6 +132,61 @@
             },
             "copy": {
                 "name": "nsg-copy",
+                "count": "[length(variables('subnets-nsgs'))]"
+            }
+        },
+        {
+            "apiVersion": "2015-01-01",
+            "type": "Microsoft.Resources/deployments",
+            "name": "subnet-nsg0-deploy",
+            "dependsOn": [
+                "[concat('subnet-nsg', length(variables('subnets-nsgs')))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [],
+                    "outputs": {}
+                }
+            }
+        },
+        {
+            "apiVersion": "2018-11-01",
+            "name": "[concat('subnet-nsg', copyIndex(1), '-deploy')]",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/hub-network",
+                "[concat('subnet-nsg', copyIndex(1))]",
+                "[concat('subnet-nsg', copyIndex(), '-deploy')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/JoeKer1/armtest/master/change-subnet-nsg.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworkName": {
+                        "value": "[variables('hub-network-name')]"
+                    },
+                    "subnetName": {
+                        "value": "[variables('subnets')[copyIndex()].name]"
+                    },
+                    "subnetAddressPrefix": {
+                        "value": "[reference(resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', variables('hub-network-name'), variables('subnets')[copyIndex()].name), '2018-03-01').addressPrefix]"
+                    },
+                    "nsgId": {
+                        "value": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('subnets-nsgs')[copyIndex()].name)]"
+                    }
+                }
+            },
+            "copy": {
+                "name": "nsg-deploy-copy",
                 "count": "[length(variables('subnets-nsgs'))]"
             }
         }
