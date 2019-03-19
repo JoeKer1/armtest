@@ -33,7 +33,7 @@
                     "protocol": "Tcp",
                     "sourcePortRange": "*",
                     "destinationPortRanges": ["8530", "8531"],
-                    "sourceIpAddressPrefixes": "[parameters('subnet-ip-ranges')]",
+                    "sourceAddressPrefixes": "[parameters('subnet-ip-ranges')]",
                     "destinationAddressPrefixes": [
                         "10.0.0.0/24"
                     ],
