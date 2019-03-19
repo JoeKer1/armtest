@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rules": {
+            "type": "array"
+        },
+        "vnetResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        },
+        "vnetName": {
+            "type": "string"
+        },
+        "subnetName": {
+            "type": "string"
+        },
+        "nsg-name": {
+            "type": "string"
+        },
+        "subnet-ip-ranges": {
+            "type": "array"
+        }
+    },
+    "variables": {
+        "nsg-name": "[parameters('nsg-name')]",
+        "rules": "[parameters('rules')]",
+        "mgmt-rules": [
+            {
+                "name": "Allow_WSUS_Update",
+                "properties": {
+                    "description": "Allow_WSUS_Update from saas",
+                    "protocol": "Tcp",
+                    "sourcePortRange": "*",
+                    "destinationPortRanges": ["8530", "8531"],
+                    "sourceIpAddressPrefixes": "[parameters('subnet-ip-ranges')]",
+                    "destinationAddressPrefixes": [
+                        "10.0.0.0/24"
+                    ]
+                }
+            }
+        ]
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('nsg-name')]",
+            "condition": "[if(equals(parameters('subnetName'), 'GatewaySubnet'), bool(0), bool(1))]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2018-11-01",
+            "properties": {
+                "securityRules": "[concat(variables('mgmt-rules'), variables('rules'))]"
+            }
+        }
+    ],
+    "outputs": {}
+}
