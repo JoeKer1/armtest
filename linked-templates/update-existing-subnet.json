@@ -13,7 +13,7 @@
         "allowedValues": [
           "networkSecurityGroup",
           "routeTable",
-          "serviceEndpoint"
+          "serviceEndpoints"
         ]
       },
       "newObjectValue": {
@@ -30,12 +30,12 @@
       "objectValueStart": {
         "networkSecurityGroup": "{ \"id\": \"",
         "routeTable": "{ \"id\": \"",
-        "serviceEndpoint": "[string('[')]"
+        "serviceEndpoints": "[string('[')]"
       },
       "objectValueEnding": {
         "networkSecurityGroup": "\" } }",
         "routeTable": "\" } }",
-        "serviceEndpoint": "[string('] }')]"
+        "serviceEndpoints": "[string('] }')]"
       },
       "newObjectString": "[concat('{ \"', parameters('newObjectType'),'\":', variables('objectValueStart')[parameters('newObjectType')], parameters('newObjectValue'), variables('objectValueEnding')[parameters('newObjectType')])]",
       "newProps": "[union(parameters('existingProperties'), json(variables('newObjectString')))]"
