@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "virtualNetworkName": {
+        "type": "string"
+      },
+      "subnetName": {
+        "type": "string"
+      },
+      "subnetAddressPrefix": {
+        "type": "string"
+      },
+      "newObjectType": {
+        "type": "string",
+        "allowedValues": [
+          "networkSecurityGroup",
+          "routeTable",
+          "serviceEndpoint"
+        ]
+      },
+      "newObjectValue": {
+        "type": "string"
+      },
+      "existingProperties": {
+        "type": "object",
+        "metadata": {
+          "description": "You must use reference() pass in this object ie: reference(resourceId(parameters('virtualNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName')), '2018-03-01')"
+        }
+      }
+    },
+    "variables": {
+      "objectValue": "/subscriptions/ea814ae6-a8b2-45d7-957c-ad946a3ceb67/resourceGroups/ITS-APPOPS-DCS-PROD-WEA01-WEB1-RG/providers/Microsoft.Network/routeTables/WEA01-WEB1-ROUTE-TABLE",
+      "newObjectString": "[concat('{ \"', parameters('newObjectType'),'\": { \"id\": \"', parameters('newObjectValue'), '\" } }')]",
+      "newProps": "[union(parameters('existingProperties'), json(variables('newObjectString')))]"
+    },
+    "resources": [
+      {
+        "apiVersion": "2018-03-01",
+        "type": "Microsoft.Network/virtualNetworks/subnets",
+        "condition": "[if(equals(parameters('subnetName'), 'GatewaySubnet'), bool(0), bool(1))]",
+        "name": "[concat(parameters('virtualNetworkName'), '/', parameters('subnetName'))]",
+        "location": "[resourceGroup().location]",
+        "properties": "[variables('newProps')]"
+      }
+    ]
+  }
