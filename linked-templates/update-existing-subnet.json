@@ -27,9 +27,19 @@
       }
     },
     "variables": {
-      "objectValue": "/subscriptions/ea814ae6-a8b2-45d7-957c-ad946a3ceb67/resourceGroups/ITS-APPOPS-DCS-PROD-WEA01-WEB1-RG/providers/Microsoft.Network/routeTables/WEA01-WEB1-ROUTE-TABLE",
-      "newObjectString": "[concat('{ \"', parameters('newObjectType'),'\": { \"id\": \"', parameters('newObjectValue'), '\" } }')]",
+      "objectValueStart": {
+        "networkSecurityGroup": "{ \"id\": \"",
+        "routeTable": "{ \"id\": \"",
+        "serviceEndpoint": "[string('[')]"
+      },
+      "objectValueEnding": {
+        "networkSecurityGroup": "\" } }",
+        "routeTable": "\" } }",
+        "serviceEndpoint": "[string('] }')]"
+      },
+      "newObjectString": "[concat('{ \"', parameters('newObjectType'),'\":', variables('objectValueStart')[parameters('newObjectType')], parameters('newObjectValue'), variables('objectValueEnding')[parameters('newObjectType')])]",
       "newProps": "[union(parameters('existingProperties'), json(variables('newObjectString')))]"
+
     },
     "resources": [
       {
