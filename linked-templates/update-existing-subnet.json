@@ -8,9 +8,6 @@
       "subnetName": {
         "type": "string"
       },
-      "subnetAddressPrefix": {
-        "type": "string"
-      },
       "newObjectType": {
         "type": "string",
         "allowedValues": [
