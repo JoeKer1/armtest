@@ -37,7 +37,8 @@
             {
                 "name": "subnets",
                 "count": "[length(parameters('subnets'))]",
-                "input": "[NCR.getSubnet(parameters('subnets')[copyIndex('subnets)], parameters('resource-prefix'))]"
+                "input": "[[if(equals(parameters('subnets')[copyIndex('subnets')].name, 'GatewaySubnet'), NCR.getGatewaySubnet(parameters('subnets')[copyIndex('subnets')], parameters('resource-prefix')), NCR.getSubnet(parameters('subnets')[copyIndex('subnets')], parameters('resource-prefix')))]" 
+                "[NCR.getSubnet(parameters('subnets')[copyIndex('subnets)], parameters('resource-prefix'))]"
             },
             {
                 "name": "subnets-nsgs",
@@ -101,22 +102,6 @@
             "namespace": "NCR",
             "members": {
                 "getSubnet": {
-                    "parameters": [
-                        {
-                            "name": "subnet",
-                            "type": "object"
-                        },
-                        {
-                            "name": "resource-prefix",
-                            "type": "string"
-                        }
-                    ],
-                    "output": {
-                        "type": "object",
-                        "value": "[if(equals(parameters('subnet').name, 'GatewaySubnet'),  NCR.getGatewaySubnet(parameters('subnet'), parameters('resource-prefix')), NCR.getNormalSubnet(parameters('subnet'), parameters('resource-prefix')))]"
-                    }
-                },
-                "getNormalSubnet": {
                     "parameters": [
                         {
                             "name": "subnet",
