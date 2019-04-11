@@ -22,6 +22,10 @@
         },
         "vnetName": {
             "type": "string"
+        },
+        "resource-prefix": {
+            "type": "string",
+            "defaultValue": ""
         }
     },
     "variables": {
@@ -33,19 +37,64 @@
                 "input": {
                     "name": "[parameters('subnets')[copyIndex('subnets')].name]",
                     "properties": {
-                        "addressPrefix": "[parameters('subnets')[copyIndex('subnets')].ipRange]"
+                        "addressPrefix": "[parameters('subnets')[copyIndex('subnets')].ipRange]",
+                        "networkSecurityGroup": {
+                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('resource-prefix'), '-', parameters('subnets')[copyIndex('subnets')].name, '-', 'NSG')]"
+                        }
                     }
+                }
+            },
+            {
+                "name": "subnets-nsgs",
+                "count": "[length(parameters('subnets'))]",
+                "input": {
+                    "name": "[concat(parameters('resource-prefix'), '-', parameters('subnets')[copyIndex('subnets-nsgs')].name, '-', 'NSG')]",
+                    "nsgrules": "[parameters('subnets')[copyIndex('subnets-nsgs')].nsgrules]"
                 }
             }
         ]
     },
     "resources": [
         {
+            "apiVersion": "2017-05-10",
+            "name": "[concat('subnet-nsg', copyIndex(1))]",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsg-template')]"
+                },
+                "parameters": {
+                    "rules": {
+                        "value": "[variables('subnets-nsgs')[copyIndex()].nsgrules]"
+                    },
+                    "vnetName": {
+                        "value": "[variables('spoke-vnet')]"
+                    },
+                    "subnetName": {
+                        "value": "[variables('subnets')[copyIndex()].name]"
+                    },
+                    "nsg-name": {
+                        "value": "[variables('subnets-nsgs')[copyIndex()].name]"
+                    }
+                }
+            },
+            "copy": {
+                "name": "nsg-copy",
+                "count": "[length(variables('subnets-nsgs'))]"
+            }
+        },
+        {
             
             "apiVersion": "2018-08-01",
             "name": "[parameters('vnetName')]",
             "type": "Microsoft.Network/virtualNetworks",
             "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('subnet-nsg', length(variables('subnets-nsgs')))]"
+            ],
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": "[parameters('addressPrefixes')]"
