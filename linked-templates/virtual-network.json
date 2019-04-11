@@ -31,6 +31,7 @@
         }
     },
     "variables": {
+        "nsg-template": "https://raw.githubusercontent.com/JoeKer1/armtest/master/linked-templates/subnet-nsg.json",
         "enableDdosProtection": false,
         "copy": [
             {
