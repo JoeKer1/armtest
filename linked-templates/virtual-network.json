@@ -37,8 +37,7 @@
             {
                 "name": "subnets",
                 "count": "[length(parameters('subnets'))]",
-                "input": "[[if(equals(parameters('subnets')[copyIndex('subnets')].name, 'GatewaySubnet'), NCR.getGatewaySubnet(parameters('subnets')[copyIndex('subnets')], parameters('resource-prefix')), NCR.getSubnet(parameters('subnets')[copyIndex('subnets')], parameters('resource-prefix')))]" 
-                "[NCR.getSubnet(parameters('subnets')[copyIndex('subnets)], parameters('resource-prefix'))]"
+                "input": "[[if(equals(parameters('subnets')[copyIndex('subnets')].name, 'GatewaySubnet'), NCR.getGatewaySubnet(parameters('subnets')[copyIndex('subnets')], parameters('resource-prefix')), NCR.getSubnet(parameters('subnets')[copyIndex('subnets')], parameters('resource-prefix')))]"
             },
             {
                 "name": "subnets-nsgs",
@@ -122,6 +121,7 @@
                                     "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('resource-prefix'), '-', parameters('subnets').name, '-NSG'))]"
                                 }
                             }
+                     
                         }
                     }
                 },
