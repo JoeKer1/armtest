@@ -5,13 +5,6 @@
         "rules": {
             "type": "array"
         },
-        "vnetResourceGroupName": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().name]"
-        },
-        "vnetName": {
-            "type": "string"
-        },
         "subnetName": {
             "type": "string"
         },
