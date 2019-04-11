@@ -41,7 +41,7 @@
                     "properties": {
                         "addressPrefix": "[parameters('subnets')[copyIndex('subnets')].ipRange]",
                         "networkSecurityGroup": {
-                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('resource-prefix'), '-', parameters('subnets')[copyIndex('subnets')].name, '-', 'NSG')]"
+                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('resource-prefix'), '-', parameters('subnets')[copyIndex('subnets')].name, '-NSG'))]"
                         }
                     }
                 }
@@ -50,7 +50,7 @@
                 "name": "subnets-nsgs",
                 "count": "[length(parameters('subnets'))]",
                 "input": {
-                    "name": "[concat(parameters('resource-prefix'), '-', parameters('subnets')[copyIndex('subnets-nsgs')].name, '-', 'NSG')]",
+                    "name": "[concat(parameters('resource-prefix'), '-', parameters('subnets')[copyIndex('subnets-nsgs')].name, '-NSG')]",
                     "nsgrules": "[parameters('subnets')[copyIndex('subnets-nsgs')].nsgrules]"
                 }
             }
