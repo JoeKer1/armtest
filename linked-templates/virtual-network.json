@@ -113,7 +113,7 @@
                     ],
                     "output": {
                         "type": "object",
-                        "value": "[if(equals(parameters('subnet').name, 'GatewaySubnet'),  NCR.getGatewaySubnet(parameters('subnet'), parameters('resource-prefix'), NCR.getNormalSubnet(parameters('subnet'), parameters('resource-prefix'))]"
+                        "value": "[if(equals(parameters('subnet').name, 'GatewaySubnet'),  NCR.getGatewaySubnet(parameters('subnet'), parameters('resource-prefix')), NCR.getNormalSubnet(parameters('subnet'), parameters('resource-prefix'))]"
                     }
                 },
                 "getNormalSubnet": {
