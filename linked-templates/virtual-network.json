@@ -37,15 +37,7 @@
             {
                 "name": "subnets",
                 "count": "[length(parameters('subnets'))]",
-                "input": {
-                    "name": "[parameters('subnets')[copyIndex('subnets')].name]",
-                    "properties": {
-                        "addressPrefix": "[parameters('subnets')[copyIndex('subnets')].ipRange]",
-                        "networkSecurityGroup": {
-                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('resource-prefix'), '-', parameters('subnets')[copyIndex('subnets')].name, '-NSG'))]"
-                        }
-                    }
-                }
+                "input": "[NCR.getSubnet(parameters('subnets')[copyIndex('subnets)], parameters('resource-prefix'))]"
             },
             {
                 "name": "subnets-nsgs",
@@ -101,6 +93,74 @@
                 },
                 "subnets": "[variables('subnets')]",
                 "enableDdosProtection": "[variables('enableDdosProtection')]"
+            }
+        }
+    ],
+    "functions": [
+        {
+            "namespace": "NCR",
+            "members": {
+                "getSubnet": {
+                    "parameters": [
+                        {
+                            "name": "subnet",
+                            "type": "object"
+                        },
+                        {
+                            "name": "resource-prefix",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "object",
+                        "value": "[if(equals(parameters('subnet').name, 'GatewaySubnet'),  NCR.getGatewaySubnet(parameters('subnet'), parameters('resource-prefix'), NCR.getNormalSubnet(parameters('subnet'), parameters('resource-prefix'))]"
+                    }
+                },
+                "getNormalSubnet": {
+                    "parameters": [
+                        {
+                            "name": "subnet",
+                            "type": "object"
+                        },
+                        {
+                            "name": "resource-prefix",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "object",
+                        "value": {
+                            "name": "[concat(parameters('resource-prefix'), '-', parameters('subnets').name, '-', 'SNET')]",
+                            "properties": {
+                                "addressPrefix": "[parameters('subnets').ipRange]",
+                                "networkSecurityGroup": {
+                                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('resource-prefix'), '-', parameters('subnets').name, '-NSG'))]"
+                                }
+                            }
+                        }
+                    }
+                },
+                "getGatewaySubnet": {
+                    "parameters": [
+                        {
+                            "name": "subnet",
+                            "type": "object"
+                        },
+                        {
+                            "name": "resource-prefix",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "object",
+                        "value": {
+                            "name": "GatewaySubnet",
+                            "properties": {
+                                "addressPrefix": "[parameters('subnets').ipRange]"
+                            }
+                        }
+                    }
+                }
             }
         }
     ]
