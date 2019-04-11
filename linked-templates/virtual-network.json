@@ -79,33 +79,13 @@
             }
         },
         {
-            "apiVersion": "2015-01-01",
-            "type": "Microsoft.Resources/deployments",
-            "name": "subnet-nsg0-deploy",
-            "dependsOn": [
-                "[concat('subnet-nsg', length(variables('subnets-nsgs')))]"
-            ],
-            "properties": {
-                "mode":"Incremental",
-                "parameters":{},
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [],
-                    "outputs": {}
-                }
-            }
-        },
-        {
             
             "apiVersion": "2018-08-01",
             "name": "[parameters('vnetName')]",
             "type": "Microsoft.Network/virtualNetworks",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "Microsoft.Resources/deployments/subnet-nsg0-deploy"
+                "[concat('subnet-nsg', length(variables('subnets-nsgs')))]"
             ],
             "properties": {
                 "addressSpace": {
