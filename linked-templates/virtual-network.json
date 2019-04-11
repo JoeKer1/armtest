@@ -91,7 +91,6 @@
             "apiVersion": "2018-08-01",
             "name": "[parameters('vnetName')]",
             "type": "Microsoft.Network/virtualNetworks",
-            "location": "[parameters('location')]",
             "dependsOn": [
                 "[concat('subnet-nsg', length(variables('subnets-nsgs')))]"
             ],
