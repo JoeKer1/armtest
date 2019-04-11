@@ -75,7 +75,7 @@
                         "value": "[variables('subnets-nsgs')[copyIndex()].nsgrules]"
                     },
                     "vnetName": {
-                        "value": "[variables('vnetName')]"
+                        "value": "[parameters('vnetName')]"
                     },
                     "subnetName": {
                         "value": "[variables('subnets')[copyIndex()].name]"
