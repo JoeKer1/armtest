@@ -62,7 +62,6 @@
             "apiVersion": "2017-05-10",
             "name": "[concat('subnet-nsg', copyIndex(1))]",
             "type": "Microsoft.Resources/deployments",
-            "location": "[parameters('location')]",
             "dependsOn": [
             ],
             "properties": {
