@@ -114,11 +114,11 @@
                     "output": {
                         "type": "object",
                         "value": {
-                            "name": "[concat(parameters('resource-prefix'), '-', parameters('subnets').name, '-', 'SNET')]",
+                            "name": "[concat(parameters('resource-prefix'), '-', parameters('subnet').name, '-', 'SNET')]",
                             "properties": {
-                                "addressPrefix": "[parameters('subnets').ipRange]",
+                                "addressPrefix": "[parameters('subnet').ipRange]",
                                 "networkSecurityGroup": {
-                                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('resource-prefix'), '-', parameters('subnets').name, '-NSG'))]"
+                                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('resource-prefix'), '-', parameters('subnet').name, '-NSG'))]"
                                 }
                             }
                      
@@ -141,7 +141,7 @@
                         "value": {
                             "name": "GatewaySubnet",
                             "properties": {
-                                "addressPrefix": "[parameters('subnets').ipRange]"
+                                "addressPrefix": "[parameters('subnet').ipRange]"
                             }
                         }
                     }
