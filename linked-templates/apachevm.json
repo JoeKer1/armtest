@@ -1,0 +1,160 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "vmName": {
+        "type": "string",
+        "defaultValue": "testvm1"
+      },
+      "vmSize": {
+        "type": "string",
+        "defaultValue": "Standard_B1s"
+      },
+      "adminUsername": {
+        "type": "string",
+        "metadata": {
+          "description": "User name for the Virtual Machine."
+        }
+      },
+      "adminPassword": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Password for the Virtual Machine."
+        }
+      },
+      "ipAddress": {
+        "type": "string",
+        "metadata": {
+            "description": "static ip address"
+        }
+      },
+      "ubuntuOSVersion": {
+        "type": "string",
+        "defaultValue": "18.04-LTS",
+        "allowedValues": [
+          "12.04.5-LTS",
+          "14.04.5-LTS",
+          "15.10",
+          "18.04-LTS"
+        ],
+        "metadata": {
+          "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version. Allowed values: 12.04.5-LTS, 14.04.5-LTS, 15.10."
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]",
+        "metadata": {
+          "description": "Location for all resources."
+        }
+      },
+      "vnetName": {
+          "type": "string"
+      },
+      "subnetName": {
+          "type": "string"
+      },
+      "zones": {
+        "type": "array"
+      }
+    },
+    "variables": {
+      "imagePublisher": "Canonical",
+      "imageOffer": "UbuntuServer",
+      "nicName": "[concat(parameters('vmName'), 'nic')]",
+      "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
+    },
+    "resources": [
+      {
+        "apiVersion": "2019-06-01",
+        "type": "Microsoft.Network/networkInterfaces",
+        "name": "[variables('nicName')]",
+        "location": "[parameters('location')]",
+        "dependsOn": [],
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": {
+                "privateIPAllocationMethod": "Static",
+                "privateIPAddress": "[parameters('ipAddress')]",
+                "subnet": {
+                  "id": "[variables('subnetRef')]"
+                },
+                "primary": true,
+                "privateIPAddressVersion": "IPv4"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "apiVersion": "2017-03-30",
+        "type": "Microsoft.Compute/virtualMachines",
+        "name": "[parameters('vmName')]",
+        "location": "[parameters('location')]",
+        "zones": "[parameters('zones')]",
+        "dependsOn": [
+          "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+        ],
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "[parameters('vmSize')]"
+          },
+          "osProfile": {
+            "computerName": "[parameters('vmName')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "[variables('imagePublisher')]",
+              "offer": "[variables('imageOffer')]",
+              "sku": "[parameters('ubuntuOSVersion')]",
+              "version": "latest"
+            },
+            "osDisk": {
+              "name": "[concat(parameters('vmName'),'_OSDisk')]",
+              "caching": "ReadWrite",
+              "createOption": "FromImage",
+              "managedDisk": {
+                  "storageAccountType": "Standard_LRS"
+              }
+            }
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "[concat(parameters('vmName'), '/config-app')]",
+        "type": "Microsoft.Compute/virtualMachines/extensions",
+        "location": "[resourceGroup().location]",
+        "apiVersion": "2019-03-01",
+        "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', concat(parameters('vmName')))]"
+        ],
+        "tags": {
+          "displayName": "config-app"
+        },
+        "properties": {
+          "publisher": "Microsoft.Azure.Extensions",
+          "type": "CustomScript",
+          "typeHandlerVersion": "2.0",
+          "autoUpgradeMinorVersion": true,
+          "settings": {
+            "skipDos2Unix":false,
+            "timestamp":123456789          
+          },
+          "protectedSettings": {
+             "script": "IyEvYmluL2Jhc2gNCmFwdC1nZXQgLXkgdXBkYXRlDQpleHBvcnQgREVCSUFOX0ZST05URU5EPW5vbmludGVyYWN0aXZlDQoNCiMgaW5zdGFsbCB0aGUgQXBhY2hlIHdlYnNlcnZlcg0KYXB0LWdldCAteSBpbnN0YWxsIGFwYWNoZTIgDQplY2hvICJTZXJ2ZXJOYW1lIGxvY2FsaG9zdCIgfCB0ZWUgL2V0Yy9hcGFjaGUyL2NvbmYtYXZhaWxhYmxlL2ZxZG4uY29uZiAmJiBhMmVuY29uZiBmcWRuDQpzeXN0ZW1jdGwgcmVsb2FkIGFwYWNoZTINCnNlZCAtaSAtZSAicy9JdCB3b3Jrcy9JdCB3b3JrcyBmcm9tICQoaG9zdG5hbWUpL2ciIC92YXIvd3d3L2h0bWwvaW5kZXguaHRtbA0K"
+          }
+        }
+      }
+    ]
+  }
